@@ -16,12 +16,6 @@ for x in range(10):
             p = system(x,y,z)
             cube.append(p.coord)
 
-vertices = np.array(
-    [
-        i for i in cube
-    ]
-)
-
 #функция для вывода частиц
 def plot_verticles(vertices, isosurf = False, filename = None):
     # Create a new plot
@@ -33,7 +27,7 @@ def plot_verticles(vertices, isosurf = False, filename = None):
     if isosurf:
         ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
     else:
-        ax.scatter(x, y, z, c='r', marker='o')    
+        ax.scatter(x, y, z, c='r', marker='*')    
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -43,7 +37,9 @@ def plot_verticles(vertices, isosurf = False, filename = None):
     else:
         plt.savefig(filename)
 
-plot_verticles(vertices = vertices, isosurf = False)
+
+
+plot_verticles(vertices = cube, isosurf = False)
 
 
 
