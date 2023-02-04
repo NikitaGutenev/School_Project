@@ -1,13 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-
-
+import math
+from matplotlib.animation import FuncAnimation
 
 
 #класс частицы
 class system():
     def __init__(self, x, y, z):
+        r = math.sqrt(x**2 + y**2 + z**2)
+        # силы тяжести частицы
+        self.Fx = x/math.fabs(r)**13 - x/math.fabs(r)**7
+        self.Fy = y/math.fabs(r)**13 - y/math.fabs(r)**7
+        self.Fz = z/math.fabs(r)**13 - z/math.fabs(r)**7
+        #её координаты
         self.coord = (x, y, z)
 
 
