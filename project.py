@@ -1,6 +1,4 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import math
 from matplotlib.animation import FuncAnimation
 
@@ -88,17 +86,20 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
         ax.plot3D(*zip(edge_vertices[edge[0]], edge_vertices[edge[1]]), color='blue')
 
 
+    #changing coordinates
+    for item in range(len(vertices)):
+        print(vertices[item].coord,' <-> ',end='')
+        vertices[item].vx += vertices[item].Ax
+        vertices[item].vy += vertices[item].Ay
+        vertices[item].vz += vertices[item].Az
+        vertices[item].coord[0] += vertices[item].vx
+        vertices[item].coord[1] += vertices[item].vy
+        vertices[item].coord[2] += vertices[item].vz
+        print(vertices[item].coord)
+
+
     # Show or save the plot
     if filename is None:
-        for item in range(len(vertices)):
-            print(vertices[item].coord,' <-> ',end='')
-            vertices[item].vx += vertices[item].Ax
-            vertices[item].vy += vertices[item].Ay
-            vertices[item].vz += vertices[item].Az
-            vertices[item].coord[0] += vertices[item].vx
-            vertices[item].coord[1] += vertices[item].vy
-            vertices[item].coord[2] += vertices[item].vz
-            print(vertices[item].coord)
         plt.show()
     else:
         plt.savefig(filename)
