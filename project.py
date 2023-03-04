@@ -9,13 +9,22 @@ from matplotlib.animation import FuncAnimation
 class system():
     def __init__(self, x, y, z):
         r = math.sqrt(x**2 + y**2 + z**2)
+        m = 10
         # силы тяжести частицы
         self.Fx = x/math.fabs(r)**13 - x/math.fabs(r)**7
         self.Fy = y/math.fabs(r)**13 - y/math.fabs(r)**7
         self.Fz = z/math.fabs(r)**13 - z/math.fabs(r)**7
         #её координаты
-        self.coord = (x, y, z)
-
+        self.coord = [x, y, z]
+        #ускорения частиц
+        self.Ax= self.Fx/m
+        self.Ay= self.Fy/m
+        self.Az= self.Fz/m
+        #скорость частиц
+        self.vx= 1
+        self.vy= 1
+        self.vz= 1
+        
 
 # создание куба с частицами
 cube = []
@@ -23,7 +32,7 @@ for x in range(3,13):
     for y in range(3,13):
         for z in range(3,13):
             p = system(x,y,z)
-            cube.append(p.coord)
+            cube.append(p)
 
 
 
@@ -32,9 +41,9 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     # Create a new plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    x = [v[0] for v in vertices]
-    y = [v[1] for v in vertices]
-    z = [v[2] for v in vertices]    
+    x = [v.coord[0] for v in vertices]
+    y = [v.coord[1] for v in vertices]
+    z = [v.coord[2] for v in vertices]    
     if isosurf:
         ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
     else:
@@ -42,6 +51,8 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+
+
 
     #  ----- creating a limited space for particles -----
     edge_vertices = [    
@@ -79,6 +90,15 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
 
     # Show or save the plot
     if filename is None:
+        for item in range(len(vertices)):
+            print(vertices[item].coord,' <-> ',end='')
+            vertices[item].vx += vertices[item].Ax
+            vertices[item].vy += vertices[item].Ay
+            vertices[item].vz += vertices[item].Az
+            vertices[item].coord[0] += vertices[item].vx
+            vertices[item].coord[1] += vertices[item].vy
+            vertices[item].coord[2] += vertices[item].vz
+            print(vertices[item].coord)
         plt.show()
     else:
         plt.savefig(filename)
