@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import math
-from matplotlib.animation import FuncAnimation
-
+import time
 
 #класс частицы
 class system():
@@ -33,6 +33,31 @@ for x in range(3,13):
             cube.append(p)
 
 
+#animation
+def anima(vertices,ax):
+    xs = []
+    ys = []
+    zs = []
+    for i in range(5):
+        for item in range(len(vertices)):
+            vertices[item].vx += vertices[item].Ax
+            vertices[item].vy += vertices[item].Ay
+            vertices[item].vz += vertices[item].Az
+            vertices[item].coord[0] += vertices[item].vx
+            vertices[item].coord[1] += vertices[item].vy
+            vertices[item].coord[2] += vertices[item].vz
+            x = vertices[item].coord[0]
+            y = vertices[item].coord[1]
+            z = vertices[item].coord[2]
+            xs.append(float(x))
+            ys.append(float(y))
+            zs.append(float(z))
+    mass = zip(xs,ys,zs)
+    for (i,j,k) in mass:
+        ax.clear()
+        ax.plot(i,j,k)
+        ax.scatter(i, j, k, c='r', marker='.') 
+        time.sleep(1/1000)
 
 #функция для вывода частиц
 def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
@@ -49,7 +74,6 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-
 
 
     #  ----- creating a limited space for particles -----
@@ -86,23 +110,15 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
         ax.plot3D(*zip(edge_vertices[edge[0]], edge_vertices[edge[1]]), color='blue')
 
 
-    #changing coordinates
-    for item in range(len(vertices)):
-        print(vertices[item].coord,' <-> ',end='')
-        vertices[item].vx += vertices[item].Ax
-        vertices[item].vy += vertices[item].Ay
-        vertices[item].vz += vertices[item].Az
-        vertices[item].coord[0] += vertices[item].vx
-        vertices[item].coord[1] += vertices[item].vy
-        vertices[item].coord[2] += vertices[item].vz
-        print(vertices[item].coord)
-
 
     # Show or save the plot
     if filename is None:
+        ani = animation.FuncAnimation(fig,anima(vertices,ax),interval=1000)
         plt.show()
     else:
         plt.savefig(filename)
+
+
 
     
 
