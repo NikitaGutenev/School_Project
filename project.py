@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import math
-import time
+import matplotlib.animation as animation
+import numpy as np
 
 #класс частицы
 class system():
@@ -32,35 +32,29 @@ for x in range(3,13):
             p = system(x,y,z)
             cube.append(p)
 
+def step(vertices,item):
+    start_pos = vertices[item].coord
+    vertices[item].vx += vertices[item].Ax
+    vertices[item].vy += vertices[item].Ay
+    vertices[item].vz += vertices[item].Az
+    vertices[item].coord[0] += vertices[item].vx
+    vertices[item].coord[1] += vertices[item].vy
+    vertices[item].coord[2] += vertices[item].vz
+    steps = np.array([vertices[item].coord[0],vertices[item].coord[1],vertices[item].coord[2]])
+    walk = start_pos + np.cumsum(steps, axis=0)
+    return walk
 
-#animation
-def anima(vertices,ax):
-    xs = []
-    ys = []
-    zs = []
-    for i in range(5):
-        for item in range(len(vertices)):
-            vertices[item].vx += vertices[item].Ax
-            vertices[item].vy += vertices[item].Ay
-            vertices[item].vz += vertices[item].Az
-            vertices[item].coord[0] += vertices[item].vx
-            vertices[item].coord[1] += vertices[item].vy
-            vertices[item].coord[2] += vertices[item].vz
-            x = vertices[item].coord[0]
-            y = vertices[item].coord[1]
-            z = vertices[item].coord[2]
-            xs.append(float(x))
-            ys.append(float(y))
-            zs.append(float(z))
-    mass = zip(xs,ys,zs)
-    for (i,j,k) in mass:
-        ax.clear()
-        ax.plot(i,j,k)
-        ax.scatter(i, j, k, c='r', marker='.') 
-        time.sleep(1/1000)
+num_steps = 100
+walks = [step(cube,i) for i in range(num_steps)]
+
+def update_dot(walks):
+    for dot in walks:
+        dot.set_data(dot)
+        dot.set_3d_properties(dot)
+    return walks
 
 #функция для вывода частиц
-def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
+def plot_verticles(vertices, walks, update, isosurf = False, filename = None, borders = None):
     # Create a new plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -74,6 +68,7 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+
 
 
     #  ----- creating a limited space for particles -----
@@ -109,20 +104,15 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     for edge in edges:
         ax.plot3D(*zip(edge_vertices[edge[0]], edge_vertices[edge[1]]), color='blue')
 
-
-
     # Show or save the plot
     if filename is None:
-        ani = animation.FuncAnimation(fig,anima(vertices,ax),interval=1000)
+        ani = animation.FuncAnimation(
+    fig, update, num_steps, fargs=(walks), interval=100)
         plt.show()
     else:
-        plt.savefig(filename)
-
-
-
-    
+        plt.savefig(filename)    
 
 #вызов функций
-plot_verticles(vertices = cube, isosurf = False)
+plot_verticles(cube, walks, update_dot, isosurf = False, filename = None, borders = None)
 
 

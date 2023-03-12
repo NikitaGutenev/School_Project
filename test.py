@@ -6,7 +6,7 @@ import matplotlib.animation as animation
 np.random.seed(19680801)
 
 
-def random_walk(num_steps, max_step=0.05):
+def random_walk(num_steps, max_step=0.1):
     """Return a 3D random walk as (num_steps, 3) array."""
     start_pos = np.random.random(3)
     steps = np.random.uniform(-max_step, max_step, size=(num_steps, 3))
@@ -21,10 +21,9 @@ def update_lines(num, walks, lines):
         line.set_3d_properties(walk[:num, 2])
     return lines
 
-
 # Data: 40 random walks as (num_steps, 3) arrays
-num_steps = 30
-walks = [random_walk(num_steps) for index in range(40)]
+num_steps = 100
+walks = [random_walk(num_steps) for index in range(100)]
 
 # Attaching 3D axis to the figure
 fig = plt.figure()
