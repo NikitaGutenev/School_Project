@@ -24,9 +24,9 @@ class system():
         self.Ay= self.Fy/m
         self.Az= self.Fz/m
         #скорость частиц
-        self.vx= 1
-        self.vy= 5
-        self.vz= 10
+        self.vx= 0.3
+        self.vy= 0.3
+        self.vz= 0.3
         
 
 # создание куба с частицами
@@ -78,6 +78,9 @@ def plot_verticles(vertices):
 
 
     # Show the plot
+    lines(ax)
+    plt.show()
+    camera.snap()
     for i in range(10):
         step(vertices,ax)
         lines(ax)
