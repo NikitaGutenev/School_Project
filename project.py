@@ -68,6 +68,10 @@ def plot_verticles(vertices):
     fig = plt.figure()
     camera = Camera(fig)
     ax = fig.add_subplot(111, projection='3d') 
+    x = [v.coord[0] for v in vertices]
+    y = [v.coord[1] for v in vertices]
+    z = [v.coord[2] for v in vertices]    
+    ax.scatter(x, y, z, c='r', marker='.')
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
