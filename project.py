@@ -15,9 +15,9 @@ class system():
         # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
         # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
         # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = self.module_comparison(x)
-        self.Fy = self.module_comparison(y)
-        self.Fz = self.module_comparison(z)
+        self.Fx = self.module_comparison(x,16-x)
+        self.Fy = self.module_comparison(y,16-y)
+        self.Fz = self.module_comparison(z,16-z)
         #её координаты
         self.coord = [x, y, z]
         #ускорения частиц
@@ -30,12 +30,12 @@ class system():
         self.vz= 0.3
     
     @staticmethod
-    def module_comparison(a):
-        module = [abs(a),abs(16-a)]
+    def module_comparison(a,b):
+        module = [abs(a),abs(b)]
         mini = min(module)
         if mini==module[0]:
             return a
-        return 16-a 
+        return b 
         
 
 # создание куба с частицами
