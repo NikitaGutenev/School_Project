@@ -34,7 +34,6 @@ for x in range(3,13):
             cube.append(p)
 
 def step(vertices,ax):
-    # global cube
     for item in range(1000):
         vertices[item].vx += vertices[item].Ax
         vertices[item].vy += vertices[item].Ay
@@ -42,8 +41,6 @@ def step(vertices,ax):
         vertices[item].coord[0] += vertices[item].vx
         vertices[item].coord[1] += vertices[item].vy
         vertices[item].coord[2] += vertices[item].vz
-        # steps = np.array([vertices[item].coord[0],vertices[item].coord[1],vertices[item].coord[2]])
-        # cube[item].coord = steps
         ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
 
 def lines(ax):
@@ -59,7 +56,7 @@ def lines(ax):
     x = [v[0] for v in edge_vertices]
     y = [v[1] for v in edge_vertices]
     z = [v[2] for v in edge_vertices]
-    ax.scatter(x, y, z, с='b',marker ='o')
+    ax.scatter(x, y, z,marker ='o')
     # Connect the vertices to form the edges of the cube
     edges = [    [0,1],
         [1,2],
@@ -82,14 +79,7 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
     # Create a new plot
     fig = plt.figure()
     camera = Camera(fig)
-    ax = fig.add_subplot(111, projection='3d')
-    x = [v.coord[0] for v in vertices]
-    y = [v.coord[1] for v in vertices]
-    z = [v.coord[2] for v in vertices]    
-    if isosurf:
-        ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
-    else:
-        ax.scatter(x, y, z, c='r', marker='.')    
+    ax = fig.add_subplot(111, projection='3d') 
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -103,7 +93,7 @@ def plot_verticles(vertices, isosurf = False, filename = None, borders = None):
             plt.show()
             camera.snap()
         animation = camera.animate()
-        animation.save('dots_2.gif', writer = 'imagemagick')
+        animation.save('dots.gif', writer = 'imagemagick')
     else:
         plt.savefig(filename)    
 
