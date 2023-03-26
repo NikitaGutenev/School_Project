@@ -15,9 +15,9 @@ class system():
         # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
         # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
         # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = self.module_comparison(x,16-x)
-        self.Fy = self.module_comparison(y,16-y)
-        self.Fz = self.module_comparison(z,16-z)
+        self.Fx = self.module_comparison(x,x-16)
+        self.Fy = self.module_comparison(y,y-16)
+        self.Fz = self.module_comparison(z,z-16)
         #её координаты
         self.coord = [x, y, z]
         #ускорения частиц
