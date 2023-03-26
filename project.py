@@ -4,6 +4,7 @@ from celluloid import Camera
 
 #класс частицы
 class system():
+          
     def __init__(self, x, y, z):
         r = math.sqrt(x**2 + y**2 + z**2)
         m = 10
@@ -14,9 +15,9 @@ class system():
         # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
         # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
         # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = min(x,16-x)
-        self.Fy = min(y,16-y)
-        self.Fz = min(z,16-z)
+        self.Fx = self.module_comparison(x)
+        self.Fy = self.module_comparison(y)
+        self.Fz = self.module_comparison(z)
         #её координаты
         self.coord = [x, y, z]
         #ускорения частиц
@@ -27,6 +28,14 @@ class system():
         self.vx= 0.3
         self.vy= 0.3
         self.vz= 0.3
+    
+    @staticmethod
+    def module_comparison(a):
+        module = [abs(a),abs(16-a)]
+        mini = min(module)
+        if mini==module[0]:
+            return a
+        return 16-a 
         
 
 # создание куба с частицами
