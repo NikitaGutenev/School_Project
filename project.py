@@ -25,9 +25,9 @@ class system():
         self.Ay= self.Fy/m
         self.Az= self.Fz/m
         #скорость частиц
-        self.vx= 0.3
-        self.vy= 0.3
-        self.vz= 0.3
+        self.vx= 0.1
+        self.vy= 0.1
+        self.vz= 0.1
     
     @staticmethod
     def module_comparison(a,b):
@@ -86,17 +86,15 @@ def plot_verticles(vertices):
     ax.set_zlabel('Z')
 
 
-    # Show the plot
+    # Create gif
     lines(ax)
-    plt.show()
     camera.snap()
     for i in range(10):
         step(vertices,ax)
         lines(ax)
-        plt.show()
         camera.snap()
     animation = camera.animate()
-    animation.save('dots.gif', writer = 'imagemagick')
+    animation.save('dots2.gif', writer = 'imagemagick')
     
 
 #вызов функций
