@@ -46,6 +46,7 @@ for x in range(3,13):
             p = system(x,y,z)
             cube.append(p)
 
+# 1 шаг частицы с учетом всех координат
 def step(vertices,ax):
     for item in range(1000):
         vertices[item].vx += vertices[item].Ax
@@ -56,6 +57,7 @@ def step(vertices,ax):
         vertices[item].coord[2] += vertices[item].vz
         ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
 
+#границы куба
 def lines(ax):
     edge_vertices = [[0,0,0],[16,0,0],[16,16,0],
                     [0,16,0],[0,0,16],[16,0,16],
@@ -64,7 +66,7 @@ def lines(ax):
     y = [v[1] for v in edge_vertices]
     z = [v[2] for v in edge_vertices]
     ax.scatter(x, y, z,marker ='o')
-    # Connect the vertices to form the edges of the cube
+    # Создание ребер куба путем соединения точек вершин
     edges = [    [0,1],[1,2],[2,3],[3,0],
                 [4,5],[5,6],[6,7],[7,4],
                 [0,4],[1,5],[2,6],[3,7]]
@@ -73,7 +75,7 @@ def lines(ax):
 
 #функция для вывода частиц
 def plot_verticles(vertices):
-    # Create a new plot
+    # Создание модели
     fig = plt.figure()
     camera = Camera(fig)
     ax = fig.add_subplot(111, projection='3d') 
@@ -86,18 +88,18 @@ def plot_verticles(vertices):
     ax.set_zlabel('Z')
 
 
-    # Create gif
+    # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(10):
+    for i in range(10): # кол-во кадров
         step(vertices,ax)
         lines(ax)
         camera.snap()
     animation = camera.animate()
-    animation.save('dots2.gif', writer = 'imagemagick')
+    animation.save('dots.gif', writer = 'imagemagick')
     
 
 #вызов функций
 plot_verticles(cube)
-
+print('ГОТОВО ЧЕКАЙ ГИФКУ')
 
