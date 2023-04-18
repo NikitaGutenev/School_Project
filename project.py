@@ -1,13 +1,12 @@
 import matplotlib.pyplot as plt
 import math
 from celluloid import Camera
-
+import random
 #класс частицы
 class system():
           
     def __init__(self, x, y, z):
-        r = math.sqrt(x**2 + y**2 + z**2)
-        m = 10
+        self.m = 10
         # силы тяжести частицы
         # self.Fx = x/math.fabs(r)**13 - x/math.fabs(r)**7
         # self.Fy = y/math.fabs(r)**13 - y/math.fabs(r)**7
@@ -15,47 +14,93 @@ class system():
         # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
         # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
         # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = self.module_comparison(x,x-16)
-        self.Fy = self.module_comparison(y,y-16)
-        self.Fz = self.module_comparison(z,z-16)
+        self.Fx = 1/self.module_comparisonx(x)
+        self.Fy = 1/self.module_comparisony(y)
+        self.Fz = 1/self.module_comparisonz(z)
         #её координаты
         self.coord = [x, y, z]
         #ускорения частиц
-        self.Ax= self.Fx/m
-        self.Ay= self.Fy/m
-        self.Az= self.Fz/m
+        self.Ax= self.Fx/self.m
+        self.Ay= self.Fy/self.m
+        self.Az= self.Fz/self.m
         #скорость частиц
-        self.vx= 0.1
-        self.vy= 0.1
-        self.vz= 0.1
-    
-    @staticmethod
-    def module_comparison(a,b):
-        module = [abs(a),abs(b)]
-        mini = min(module)
-        if mini==module[0]:
-            return a
-        return b 
-        
+        self.vx= random.random() - 0.5
+        self.vy= random.random() - 0.5
+        self.vz= random.random() - 0.5
+   
 
-# создание куба с частицами
+# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси X
+    def module_comparisonx(self,a):
+        if abs(a) < abs(a - 16):
+            if a<0:
+                self.vx = abs(self.vx) / 2
+            return abs(a)
+        else:
+            if a>16:
+                self.vx = - abs(self.vx) / 2
+            return -abs(a - 16)  
+        
+# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Y
+    def module_comparisony(self,a):
+        if abs(a) < abs(a - 16):
+            if a<0:
+                self.vy = abs(self.vy) / 2
+            return abs(a)
+        else:
+            if a>16:
+                self.vy = - abs(self.vy) / 2
+            return -abs(a - 16)
+        
+# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Z
+    def module_comparisonz(self,a):
+        if abs(a) < abs(a - 16):
+            if a<0:
+                self.vz = abs(self.vz) / 2
+            return abs(a)
+        else:
+            if a>16:
+                self.vz = - abs(self.vz) / 2
+            return -abs(a - 16)             
+    
 cube = []
-for x in range(3,13):
-    for y in range(3,13):
-        for z in range(3,13):
+for x in range(6,11):
+    for y in range(6,11):
+        for z in range(6,11):
             p = system(x,y,z)
             cube.append(p)
 
 # 1 шаг частицы с учетом всех координат
 def step(vertices,ax):
-    for item in range(1000):
-        vertices[item].vx += vertices[item].Ax
-        vertices[item].vy += vertices[item].Ay
-        vertices[item].vz += vertices[item].Az
+    for item in range(125):
         vertices[item].coord[0] += vertices[item].vx
         vertices[item].coord[1] += vertices[item].vy
         vertices[item].coord[2] += vertices[item].vz
+        vertices[item].vx += vertices[item].Ax
+        vertices[item].vy += vertices[item].Ay
+        vertices[item].vz += vertices[item].Az
+        #изменение силы взаимодействия со стенкой и вычисление ускорения
+        vertices[item].Fx = 1/(vertices[item].module_comparisonx(vertices[item].coord[0]))
+        vertices[item].Fy = 1/(vertices[item].module_comparisony(vertices[item].coord[1]))
+        vertices[item].Fz = 1/(vertices[item].module_comparisonz(vertices[item].coord[2]))
+        vertices[item].Ax= vertices[item].Fx**3/vertices[item].m
+        vertices[item].Ay= vertices[item].Fy**3/vertices[item].m
+        vertices[item].Az= vertices[item].Fz**3/vertices[item].m
+
         ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
+
+        #ограничение ускорения (предельное ускорение)
+        if vertices[item].Ax > 0.2:
+            vertices[item].Ax = 0.2
+        if vertices[item].Ay > 0.2:
+            vertices[item].Ay = 0.2
+        if vertices[item].Az > 0.2:
+            vertices[item].Az = 0.2
+        if vertices[item].Ax < -0.2:
+            vertices[item].Ax = -0.2
+        if vertices[item].Ay < -0.2:
+            vertices[item].Ay = -0.2
+        if vertices[item].Az < -0.2:
+            vertices[item].Az = -0.2    
 
 #границы куба
 def lines(ax):
@@ -91,7 +136,7 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(10): # кол-во кадров
+    for i in range(70): # кол-во кадров
         step(vertices,ax)
         lines(ax)
         camera.snap()
