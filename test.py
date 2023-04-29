@@ -83,7 +83,7 @@ for x in range(6,11):
 
 # 1 шаг частицы с учетом всех координат
 chast = 124*[0]
-mini = 1
+mini = 2
 helper = 0
 def step(vertices,ax):
     global chast,mini,helper
@@ -133,8 +133,9 @@ def step(vertices,ax):
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
         else:
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
+        
+        helper = 0
     chast = 124*[0]
-    helper = 0
 
 #границы куба
 def lines(ax):
