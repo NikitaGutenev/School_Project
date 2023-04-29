@@ -75,15 +75,15 @@ class system():
             return -abs(a - 16)             
     
 cube = []
-for x in range(6,11):
-    for y in range(6,11):
-        for z in range(6,11):
+for x in range(6,10):
+    for y in range(6,10):
+        for z in range(6,10):
             p = system(x,y,z)
             cube.append(p)
 
 # 1 шаг частицы с учетом всех координат
-chast = 124*[0]
-mini = 2
+chast = 63*[0]
+radius = 3
 helper = 0
 def step(vertices,ax):
     global chast,mini,helper
@@ -91,7 +91,7 @@ def step(vertices,ax):
         '''функция нахождения расстояния между частицами'''
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
 
-    for item in range(125):
+    for item in range(64):
         vertices[item].coord[0] += vertices[item].V[0]
         vertices[item].coord[1] += vertices[item].V[1]
         vertices[item].coord[2] += vertices[item].V[2]
@@ -108,7 +108,7 @@ def step(vertices,ax):
         vertices[item].A[2]= vertices[item].F[2]**3/vertices[item].m
 
         #взаимодействие между часицами
-        if ( ((distantion := raast(vertices[0], vertices[item])) < mini) and item!=0):
+        if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
             chast[item] = distantion
             helper = 1
 
@@ -135,7 +135,7 @@ def step(vertices,ax):
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
         
         helper = 0
-    chast = 124*[0]
+    chast = 63*[0]
 
 #границы куба
 def lines(ax):
