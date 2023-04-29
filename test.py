@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import math
 from celluloid import Camera
 import random
+
 #класс частицы
 class system():
           
@@ -28,41 +29,49 @@ class system():
         self.vy= random.random() - 0.5
         self.vz= random.random() - 0.5
         #для удобства - массивы с силами,ускорениями и скоростями
-        self.F = [self.Fx,self.Fz,self.Fy]
+        self.F = [self.Fx,self.Fy,self.Fz]
         self.A = [self.Ax,self.Ay,self.Az]
         self.V = [self.vx,self.vy,self.vz]
-
+#обновляет данные массива
+    def update(self):
+        self.F = [self.Fx,self.Fy,self.Fz]
+        self.A = [self.Ax,self.Ay,self.Az]
+        self.V = [self.vx,self.vy,self.vz]
 # вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси X
     def module_comparisonx(self,a):
         if abs(a) < abs(a - 16):
             if a<0:
                 self.vx = abs(self.vx) / 2
+                self.update()
             return abs(a)
         else:
             if a>16:
                 self.vx = - abs(self.vx) / 2
-            return -abs(a - 16)  
-        
+                self.update()
+            return -abs(a - 16)       
 # вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Y
     def module_comparisony(self,a):
         if abs(a) < abs(a - 16):
             if a<0:
                 self.vy = abs(self.vy) / 2
+                self.update()
             return abs(a)
         else:
             if a>16:
                 self.vy = - abs(self.vy) / 2
+                self.update()
             return -abs(a - 16)
-        
 # вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Z
     def module_comparisonz(self,a):
         if abs(a) < abs(a - 16):
             if a<0:
                 self.vz = abs(self.vz) / 2
+                self.update()
             return abs(a)
         else:
             if a>16:
                 self.vz = - abs(self.vz) / 2
+                self.update()
             return -abs(a - 16)             
     
 cube = []
@@ -73,7 +82,11 @@ for x in range(6,11):
             cube.append(p)
 
 # 1 шаг частицы с учетом всех координат
+chast = 124*[0]
+mini = 1
+helper = 0
 def step(vertices,ax):
+    global chast,mini,helper
     def raast(a,b):
         '''функция нахождения расстояния между частицами'''
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
@@ -95,29 +108,33 @@ def step(vertices,ax):
         vertices[item].A[2]= vertices[item].F[2]**3/vertices[item].m
 
         #взаимодействие между часицами
-        chast = 124*[0]
-        mini = 1
-        for i in range(1,125):
-            if ((distantion:=raast(vertices[0],vertices[item]))<mini and item!=0):
-                chast[i] = distantion
-        
+        if ( ((distantion := raast(vertices[0], vertices[item])) < mini) and item!=0):
+            chast[item] = distantion
+            helper = 1
+
         #ограничение ускорения (предельное ускорение)
-        if vertices[item].Ax > 0.2:
-            vertices[item].Ax = 0.2
-        if vertices[item].Ay > 0.2:
-            vertices[item].Ay = 0.2
-        if vertices[item].Az > 0.2:
-            vertices[item].Az = 0.2
-        if vertices[item].Ax < -0.2:
-            vertices[item].Ax = -0.2
-        if vertices[item].Ay < -0.2:
-            vertices[item].Ay = -0.2
-        if vertices[item].Az < -0.2:
-            vertices[item].Az = -0.2    
+        if vertices[item].A[0] > 0.2:
+            vertices[item].A[0] = 0.2
+        if vertices[item].A[1] > 0.2:
+            vertices[item].A[1] = 0.2
+        if vertices[item].A[2] > 0.2:
+            vertices[item].A[2] = 0.2
+        if vertices[item].A[0] < -0.2:
+            vertices[item].A[0] = -0.2
+        if vertices[item].A[1] < -0.2:
+            vertices[item].A[1] = -0.2
+        if vertices[item].A[2] < -0.2:
+            vertices[item].A[2] = -0.2      
 
-        #обновление частиц
-        ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
-
+        #обновление цвета частиц
+        if item==0:
+            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='black', marker='*')
+        elif helper==0:
+            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
+        else:
+            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
+    chast = 124*[0]
+    helper = 0
 
 #границы куба
 def lines(ax):
@@ -127,7 +144,7 @@ def lines(ax):
     x = [v[0] for v in edge_vertices]
     y = [v[1] for v in edge_vertices]
     z = [v[2] for v in edge_vertices]
-    ax.scatter(x, y, z,marker ='o')
+    ax.scatter(x, y, z,c='blue',marker ='o')
     # Создание ребер куба путем соединения точек вершин
     edges = [    [0,1],[1,2],[2,3],[3,0],
                 [4,5],[5,6],[6,7],[7,4],
@@ -149,7 +166,6 @@ def plot_verticles(vertices):
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
 
-
     # Создание гиф
     lines(ax)
     camera.snap()
@@ -160,7 +176,6 @@ def plot_verticles(vertices):
     animation = camera.animate()
     animation.save('dots.gif', writer = 'imagemagick')
     
-
 #вызов функций
 plot_verticles(cube)
 print('ГОТОВО ЧЕКАЙ ГИФКУ')
