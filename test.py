@@ -27,7 +27,10 @@ class system():
         self.vx= random.random() - 0.5
         self.vy= random.random() - 0.5
         self.vz= random.random() - 0.5
-   
+        #для удобства - массивы с силами,ускорениями и скоростями
+        self.F = [self.Fx,self.Fz,self.Fy]
+        self.A = [self.Ax,self.Ay,self.Az]
+        self.V = [self.vx,self.vy,self.vz]
 
 # вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси X
     def module_comparisonx(self,a):
@@ -76,20 +79,20 @@ def step(vertices,ax):
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
 
     for item in range(125):
-        vertices[item].coord[0] += vertices[item].vx
-        vertices[item].coord[1] += vertices[item].vy
-        vertices[item].coord[2] += vertices[item].vz
-        vertices[item].vx += vertices[item].Ax
-        vertices[item].vy += vertices[item].Ay
-        vertices[item].vz += vertices[item].Az
+        vertices[item].coord[0] += vertices[item].V[0]
+        vertices[item].coord[1] += vertices[item].V[1]
+        vertices[item].coord[2] += vertices[item].V[2]
+        vertices[item].V[0] += vertices[item].A[0]
+        vertices[item].V[1] += vertices[item].A[1]
+        vertices[item].V[2] += vertices[item].A[2]
 
         #изменение силы взаимодействия со стенкой и вычисление ускорения
-        vertices[item].Fx = 1/(vertices[item].module_comparisonx(vertices[item].coord[0]))
-        vertices[item].Fy = 1/(vertices[item].module_comparisony(vertices[item].coord[1]))
-        vertices[item].Fz = 1/(vertices[item].module_comparisonz(vertices[item].coord[2]))
-        vertices[item].Ax= vertices[item].Fx**3/vertices[item].m
-        vertices[item].Ay= vertices[item].Fy**3/vertices[item].m
-        vertices[item].Az= vertices[item].Fz**3/vertices[item].m
+        vertices[item].F[0] = 1/(vertices[item].module_comparisonx(vertices[item].coord[0]))
+        vertices[item].F[1] = 1/(vertices[item].module_comparisony(vertices[item].coord[1]))
+        vertices[item].F[2] = 1/(vertices[item].module_comparisonz(vertices[item].coord[2]))
+        vertices[item].A[0]= vertices[item].F[0]**3/vertices[item].m
+        vertices[item].A[1]= vertices[item].F[1]**3/vertices[item].m
+        vertices[item].A[2]= vertices[item].F[2]**3/vertices[item].m
 
         #взаимодействие между часицами
         chast = 124*[0]
