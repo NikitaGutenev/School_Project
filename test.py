@@ -82,7 +82,8 @@ for x in range(6,10):
             cube.append(p)
 
 # 1 шаг частицы с учетом всех координат
-chast = 63*[0]
+chast = []
+inter = []
 radius = 3
 helper = 0
 def step(vertices,ax):
@@ -109,7 +110,8 @@ def step(vertices,ax):
 
         #взаимодействие между часицами
         if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
-            chast[item] = distantion
+            chast.append(distantion)
+            inter.append(item)
             helper = 1
 
         #ограничение ускорения (предельное ускорение)
@@ -135,7 +137,8 @@ def step(vertices,ax):
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
         
         helper = 0
-    chast = 63*[0]
+    chast = []
+    inter = []
 
 #границы куба
 def lines(ax):
@@ -170,7 +173,7 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(70): # кол-во кадров
+    for i in range(1): # кол-во кадров
         step(vertices,ax)
         lines(ax)
         camera.snap()
@@ -180,6 +183,3 @@ def plot_verticles(vertices):
 #вызов функций
 plot_verticles(cube)
 print('ГОТОВО ЧЕКАЙ ГИФКУ')
-
-
- 
