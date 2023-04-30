@@ -93,20 +93,12 @@ def step(vertices,ax):
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
 
     for item in range(64):
-        vertices[item].coord[0] += vertices[item].V[0]
-        vertices[item].coord[1] += vertices[item].V[1]
-        vertices[item].coord[2] += vertices[item].V[2]
-        vertices[item].V[0] += vertices[item].A[0]
-        vertices[item].V[1] += vertices[item].A[1]
-        vertices[item].V[2] += vertices[item].A[2]
-
-        #изменение силы взаимодействия со стенкой и вычисление ускорения
-        vertices[item].F[0] = 1/(vertices[item].module_comparisonx(vertices[item].coord[0]))
-        vertices[item].F[1] = 1/(vertices[item].module_comparisony(vertices[item].coord[1]))
-        vertices[item].F[2] = 1/(vertices[item].module_comparisonz(vertices[item].coord[2]))
-        vertices[item].A[0]= vertices[item].F[0]**3/vertices[item].m
-        vertices[item].A[1]= vertices[item].F[1]**3/vertices[item].m
-        vertices[item].A[2]= vertices[item].F[2]**3/vertices[item].m
+        for j in range(3):
+            vertices[item].coord[j] += vertices[item].V[j]
+            vertices[item].V[j] += vertices[item].A[j]
+            #изменение силы взаимодействия со стенкой и вычисление ускорения
+            vertices[item].F[j] = 1/(vertices[item].module_comparisonx(vertices[item].coord[j]))
+            vertices[item].A[j]= vertices[item].F[j]**3/vertices[item].m
 
         #взаимодействие между часицами
         if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
@@ -115,18 +107,12 @@ def step(vertices,ax):
             helper = 1
 
         #ограничение ускорения (предельное ускорение)
-        if vertices[item].A[0] > 0.2:
-            vertices[item].A[0] = 0.2
-        if vertices[item].A[1] > 0.2:
-            vertices[item].A[1] = 0.2
-        if vertices[item].A[2] > 0.2:
-            vertices[item].A[2] = 0.2
-        if vertices[item].A[0] < -0.2:
-            vertices[item].A[0] = -0.2
-        if vertices[item].A[1] < -0.2:
-            vertices[item].A[1] = -0.2
-        if vertices[item].A[2] < -0.2:
-            vertices[item].A[2] = -0.2      
+        for j in range(2):
+            if vertices[item].A[j] > 0.2:
+                vertices[item].A[j] = 0.2
+            if vertices[item].A[j] < -0.2:
+                vertices[item].A[j] = -0.2
+    
 
         #обновление цвета частиц
         if item==0:
