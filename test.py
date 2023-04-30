@@ -7,19 +7,19 @@ import random
 class system():
           
     def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
         self.m = 10
         # силы тяжести частицы
-        # self.Fx = x/math.fabs(r)**13 - x/math.fabs(r)**7
-        # self.Fy = y/math.fabs(r)**13 - y/math.fabs(r)**7
-        # self.Fz = z/math.fabs(r)**13 - z/math.fabs(r)**7
         # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
         # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
         # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = 1/self.module_comparisonx(x)
-        self.Fy = 1/self.module_comparisony(y)
-        self.Fz = 1/self.module_comparisonz(z)
+        self.Fx = 1/self.module_comparisonx(self.x)
+        self.Fy = 1/self.module_comparisony(self.y)
+        self.Fz = 1/self.module_comparisonz(self.z)
         #её координаты
-        self.coord = [x, y, z]
+        self.coord = [self.x, self.y, self.z]
         #ускорения частиц
         self.Ax= self.Fx/self.m
         self.Ay= self.Fy/self.m
@@ -34,6 +34,7 @@ class system():
         self.V = [self.vx,self.vy,self.vz]
 #обновляет данные массива
     def update(self):
+        self.coord = [self.x, self.y, self.z]
         self.F = [self.Fx,self.Fy,self.Fz]
         self.A = [self.Ax,self.Ay,self.Az]
         self.V = [self.vx,self.vy,self.vz]
@@ -96,9 +97,12 @@ def step(vertices,ax):
         for j in range(3):
             vertices[item].coord[j] += vertices[item].V[j]
             vertices[item].V[j] += vertices[item].A[j]
+
             #изменение силы взаимодействия со стенкой и вычисление ускорения
             vertices[item].F[j] = 1/(vertices[item].module_comparisonx(vertices[item].coord[j]))
+
             vertices[item].A[j]= vertices[item].F[j]**3/vertices[item].m
+
 
         #взаимодействие между часицами
         if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
@@ -107,7 +111,7 @@ def step(vertices,ax):
             helper = 1
 
         #ограничение ускорения (предельное ускорение)
-        for j in range(2):
+        for j in range(3):
             if vertices[item].A[j] > 0.2:
                 vertices[item].A[j] = 0.2
             if vertices[item].A[j] < -0.2:
@@ -123,6 +127,13 @@ def step(vertices,ax):
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
         
         helper = 0
+        
+    for index,item in enumerate(inter): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
+        print(index, item)              #сделано это для того,чтобы было проще связывать этот массив с массивом chast
+        for j in range(3):
+            print(f'--|{vertices[item].coord[j]}|--')
+            vertices[item].A[j] += (vertices[item].coord[j]/math.fabs(chast[index])**13 - 
+                                    vertices[item].coord[j]/math.fabs(chast[index])**7)/vertices[item].m
     chast = []
     inter = []
 
