@@ -87,7 +87,7 @@ inter = []
 radius = 3
 helper = 0
 def step(vertices,ax):
-    global chast,mini,helper
+    global chast,inter,helper
     def raast(a,b):
         '''функция нахождения расстояния между частицами'''
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
@@ -159,7 +159,7 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(1): # кол-во кадров
+    for i in range(70): # кол-во кадров
         step(vertices,ax)
         lines(ax)
         camera.snap()
