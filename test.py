@@ -129,11 +129,14 @@ def step(vertices,ax):
         helper = 0
         
     for index,item in enumerate(inter): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
-        print(index, item)              #сделано это для того,чтобы было проще связывать этот массив с массивом chast
+                                        #сделано это для того,чтобы было проще связывать этот массив с массивом chast
         for j in range(3):
-            print(f'--|{vertices[item].coord[j]}|--')
-            vertices[item].A[j] += (vertices[item].coord[j]/math.fabs(chast[index])**13 - 
+            vertices[0].A[j] += (vertices[item].coord[j]/math.fabs(chast[index])**13 - 
                                     vertices[item].coord[j]/math.fabs(chast[index])**7)/vertices[item].m
+            if vertices[0].A[j] > 0.2:
+                vertices[0].A[j] = 0.2
+            if vertices[0].A[j] < -0.2:
+                vertices[0].A[j] = -0.2
     chast = []
     inter = []
 
