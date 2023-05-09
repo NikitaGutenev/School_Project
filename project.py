@@ -120,13 +120,13 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(60): # кол-во кадров
+    for i in range(150): # кол-во кадров
         step(vertices)
         interaction(vertices, ax)
         lines(ax)
         camera.snap()
-    animation = camera.animate()
-    animation.save('dots.gif', writer = 'imagemagick')
+    animate = camera.animate()
+    animate.save('27_dots.gif', writer = 'imagemagick')
     
 #вызов функций
 plot_verticles(cube)
