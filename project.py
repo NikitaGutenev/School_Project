@@ -120,7 +120,7 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(150): # кол-во кадров
+    for i in range(600): # кол-во кадров
         step(vertices)
         interaction(vertices, ax)
         lines(ax)
