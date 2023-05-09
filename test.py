@@ -44,33 +44,15 @@ for x in range(6,9):
             p = system(x,y,z)
             cube.append(p)
 
-# 1 шаг частицы с учетом всех координат
-chast = []
-inter = []
-radius = 3
-helper = 0
-def step(vertices,ax):
-    global chast,inter,helper
-    def raast(a,b):
-        '''функция нахождения расстояния между частицами'''
-        return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
-
+# 1 шаг частицы с учетом всех координат(без взаимодействия)
+def step(vertices):
     for item in range(27):
         for j in range(3):
             vertices[item].coord[j] += vertices[item].V[j]
             vertices[item].V[j] += vertices[item].A[j]
-
             #изменение силы взаимодействия со стенкой и вычисление ускорения
             vertices[item].F[j] = 1/(vertices[item].module_comparison(vertices[item].coord[j],j))
-
             vertices[item].A[j]= vertices[item].F[j]**3/vertices[item].m
-
-        #взаимодействие между часицами
-        if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
-            chast.append(distantion)
-            inter.append(item)
-            helper = 1
-
         #ограничение ускорения (предельное ускорение)
         for j in range(3):
             if vertices[item].A[j] > 0.2:
@@ -78,26 +60,32 @@ def step(vertices,ax):
             if vertices[item].A[j] < -0.2:
                 vertices[item].A[j] = -0.2
     
-        #обновление цвета частиц
-        if item==0:
-            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='black', marker='*')
-        elif helper==0:
-            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='r', marker='.')
-        else:
-            ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='g', marker='.')
-        
-        helper = 0
-        
-    for index,item in enumerate(inter): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
-                                        #сделано это для того,чтобы было проще связывать этот массив с массивом chast
-        for j in range(3):
-            vertices[0].A[j] += ((vertices[item].coord[j] - vertices[0].coord[j]) /(math.fabs(chast[index])**13))/vertices[0].m - ((vertices[item].coord[j] - vertices[0].coord[j]) /(math.fabs(chast[index])**7))/vertices[0].m 
-            if vertices[0].A[j] > 0.2:
-                vertices[0].A[j] = 0.2
-            if vertices[0].A[j] < -0.2:
-                vertices[0].A[j] = -0.2
-    chast = []
-    inter = []
+#взаимодействие между часицами
+def interaction(vertices, ax):
+    chast = [[]]*27
+    inter = [[]]*27
+    radius = 3
+    def raast(a,b):
+        '''функция нахождения расстояния между частицами'''
+        return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
+    
+    for i in range(27):
+        for j in range(27):
+            if ((distantion := raast(vertices[i], vertices[j])) < radius) and i!=j:
+                chast[i].append(distantion)
+                inter[i].append(j)
+    for i in range(27):
+        for index,item in enumerate(inter[i]): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
+                                            #сделано это для того,чтобы было проще связывать этот массив с массивом chast
+            for j in range(3):
+                vertices[i].A[j] += ((vertices[item].coord[j] - vertices[i].coord[j]) /(math.fabs(chast[i][index])**13))/vertices[i].m - ((vertices[item].coord[j] - vertices[i].coord[j]) /(math.fabs(chast[i][index])**7))/vertices[i].m 
+                if vertices[i].A[j] > 0.2:
+                    vertices[i].A[j] = 0.2
+                if vertices[i].A[j] < -0.2:
+                    vertices[i].A[j] = -0.2
+        ax.scatter(vertices[i].coord[0], vertices[i].coord[1], vertices[i].coord[2], c='r', marker='.')
+    chast = [[]]*27
+    inter = [[]]*27
 
 #границы куба
 def lines(ax):
@@ -133,7 +121,8 @@ def plot_verticles(vertices):
     lines(ax)
     camera.snap()
     for i in range(60): # кол-во кадров
-        step(vertices,ax)
+        step(vertices)
+        interaction(vertices, ax)
         lines(ax)
         camera.snap()
     animation = camera.animate()
