@@ -11,74 +11,36 @@ class system():
         self.y = y
         self.z = z
         self.m = 10
-        # силы тяжести частицы
-        # self.Fx = (16-x)/math.fabs(r)**13 - (16-x)/math.fabs(r)**7
-        # self.Fy = (16-y)/math.fabs(r)**13 - (16-y)/math.fabs(r)**7
-        # self.Fz = (16-z)/math.fabs(r)**13 - (16-z)/math.fabs(r)**7
-        self.Fx = 1/self.module_comparisonx(self.x)
-        self.Fy = 1/self.module_comparisony(self.y)
-        self.Fz = 1/self.module_comparisonz(self.z)
+        #для удобства - массивы с силами,ускорениями и скоростями
+        self.F = [0]*3
+        self.A = [0]*3
+        self.V = [0]*3
         #её координаты
         self.coord = [self.x, self.y, self.z]
+
+        for i in range(3):
+        # силы тяжести частицы
+            self.F[i] = 1/self.module_comparison(self.x, i)
         #ускорения частиц
-        self.Ax= self.Fx/self.m
-        self.Ay= self.Fy/self.m
-        self.Az= self.Fz/self.m
+            self.A[i]= self.F[i]/self.m
         #скорость частиц
-        self.vx= random.random() - 0.5
-        self.vy= random.random() - 0.5
-        self.vz= random.random() - 0.5
-        #для удобства - массивы с силами,ускорениями и скоростями
-        self.F = [self.Fx,self.Fy,self.Fz]
-        self.A = [self.Ax,self.Ay,self.Az]
-        self.V = [self.vx,self.vy,self.vz]
-#обновляет данные массива
-    def update(self):
-        self.coord = [self.x, self.y, self.z]
-        self.F = [self.Fx,self.Fy,self.Fz]
-        self.A = [self.Ax,self.Ay,self.Az]
-        self.V = [self.vx,self.vy,self.vz]
-# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси X
-    def module_comparisonx(self,a):
+            self.V[i]= random.random() - 0.5
+
+# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание
+    def module_comparison(self,a,c):
         if abs(a) < abs(a - 16):
             if a<0:
-                self.vx = abs(self.vx) / 2
-                self.update()
+                self.V[c] = abs(self.V[c]) / 2
             return abs(a)
         else:
             if a>16:
-                self.vx = - abs(self.vx) / 2
-                self.update()
-            return -abs(a - 16)       
-# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Y
-    def module_comparisony(self,a):
-        if abs(a) < abs(a - 16):
-            if a<0:
-                self.vy = abs(self.vy) / 2
-                self.update()
-            return abs(a)
-        else:
-            if a>16:
-                self.vy = - abs(self.vy) / 2
-                self.update()
-            return -abs(a - 16)
-# вычисляет расстояние до близжайшей границы и осуществляет неупругое отталкивание по оси Z
-    def module_comparisonz(self,a):
-        if abs(a) < abs(a - 16):
-            if a<0:
-                self.vz = abs(self.vz) / 2
-                self.update()
-            return abs(a)
-        else:
-            if a>16:
-                self.vz = - abs(self.vz) / 2
-                self.update()
-            return -abs(a - 16)             
+                self.V[c] = - abs(self.V[c]) / 2
+            return -abs(a - 16)                 
     
 cube = []
-for x in range(6,10):
-    for y in range(6,10):
-        for z in range(6,10):
+for x in range(6,9):
+    for y in range(6,9):
+        for z in range(6,9):
             p = system(x,y,z)
             cube.append(p)
 
@@ -93,16 +55,15 @@ def step(vertices,ax):
         '''функция нахождения расстояния между частицами'''
         return math.sqrt((a.coord[0]-b.coord[0])**2 + (a.coord[1]-b.coord[1])**2 + (a.coord[2]-b.coord[2])**2)
 
-    for item in range(64):
+    for item in range(27):
         for j in range(3):
             vertices[item].coord[j] += vertices[item].V[j]
             vertices[item].V[j] += vertices[item].A[j]
 
             #изменение силы взаимодействия со стенкой и вычисление ускорения
-            vertices[item].F[j] = 1/(vertices[item].module_comparisonx(vertices[item].coord[j]))
+            vertices[item].F[j] = 1/(vertices[item].module_comparison(vertices[item].coord[j],j))
 
             vertices[item].A[j]= vertices[item].F[j]**3/vertices[item].m
-
 
         #взаимодействие между часицами
         if ( ((distantion := raast(vertices[0], vertices[item])) < radius) and item!=0):
@@ -117,7 +78,6 @@ def step(vertices,ax):
             if vertices[item].A[j] < -0.2:
                 vertices[item].A[j] = -0.2
     
-
         #обновление цвета частиц
         if item==0:
             ax.scatter(vertices[item].coord[0], vertices[item].coord[1], vertices[item].coord[2], c='black', marker='*')
@@ -131,8 +91,7 @@ def step(vertices,ax):
     for index,item in enumerate(inter): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
                                         #сделано это для того,чтобы было проще связывать этот массив с массивом chast
         for j in range(3):
-            vertices[0].A[j] += (raast(vertices[0],vertices[item])/math.fabs(chast[index])**13 - 
-                                    raast(vertices[0],vertices[item])/math.fabs(chast[index])**7)/vertices[item].m
+            vertices[0].A[j] += ((vertices[item].coord[j] - vertices[0].coord[j]) /(math.fabs(chast[index])**13))/vertices[0].m - ((vertices[item].coord[j] - vertices[0].coord[j]) /(math.fabs(chast[index])**7))/vertices[0].m 
             if vertices[0].A[j] > 0.2:
                 vertices[0].A[j] = 0.2
             if vertices[0].A[j] < -0.2:
@@ -173,7 +132,7 @@ def plot_verticles(vertices):
     # Создание гиф
     lines(ax)
     camera.snap()
-    for i in range(70): # кол-во кадров
+    for i in range(60): # кол-во кадров
         step(vertices,ax)
         lines(ax)
         camera.snap()
