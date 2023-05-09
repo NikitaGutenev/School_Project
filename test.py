@@ -131,8 +131,8 @@ def step(vertices,ax):
     for index,item in enumerate(inter): #эта   функция энумерате возвращается кортежи (индекс элемента массива, сам элемент массива)
                                         #сделано это для того,чтобы было проще связывать этот массив с массивом chast
         for j in range(3):
-            vertices[0].A[j] += (vertices[item].coord[j]/math.fabs(chast[index])**13 - 
-                                    vertices[item].coord[j]/math.fabs(chast[index])**7)/vertices[item].m
+            vertices[0].A[j] += (raast(vertices[0],vertices[item])/math.fabs(chast[index])**13 - 
+                                    raast(vertices[0],vertices[item])/math.fabs(chast[index])**7)/vertices[item].m
             if vertices[0].A[j] > 0.2:
                 vertices[0].A[j] = 0.2
             if vertices[0].A[j] < -0.2:
